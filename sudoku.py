@@ -302,7 +302,7 @@ def extract_cells_of_sudoku(input_parameters):
 # ======================================================================================================
 # ====================================== INPUT PARAMETERS ===============================================
 # =======================================================================================================
-image_path = 'E:/PythonProjects/Sudoku/Samples/s.jpg'  # <- insert image name here
+image_path = 'Samples/s.jpg'  # <- insert image name here
 
 # for gaussian filter
 sigma = 0.5
