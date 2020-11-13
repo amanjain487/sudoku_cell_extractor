@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import other_image_processing_functions as my_cv
+import image_processing_functions as my_cv
 
 
 # to make all pixel values non-negative
