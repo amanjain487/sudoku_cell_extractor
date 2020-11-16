@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import image_processing_functions as my_cv
+import image_process_module as my_cv
 
 
 # to make all pixel values non-negative
@@ -151,7 +151,8 @@ def extract_cells_of_sudoku(input_parameters):
     # using gaussian filter
     blurred_image = my_cv.apply_gaussian_filter(grayscale_image, my_cv.get_gauss_kernel(1))
     # convert to binary image from smoothened image
-    binary_image = my_cv.convert_to_binary(blurred_image, 7, 3, 255)
+    binary_image = my_cv.convert_to_binary(blurred_image, input_parameters["kernel_size"], input_parameters["bias"],
+                                           input_parameters["changing_value"])
     cv2.imshow("Binary Image", binary_image)
     cv2.waitKey(1)
 
@@ -176,8 +177,9 @@ def extract_cells_of_sudoku(input_parameters):
         i[0], i[1] = i[1], i[0]
     corners_of_sudoku_puzzle = np.float32(corners_of_sudoku_puzzle)
     # find perspective transformation matrix
+    destination_corners = np.float32([[50, 50], [450, 50], [450, 450], [50, 450]])
     perspective_transformation_matrix = my_cv.get_perspective_matrix(corners_of_sudoku_puzzle,
-                                                                     input_parameters["destination_corners"])
+                                                                     destination_corners)
     # apply perspective transformation by bi-linear interpolation
     perspective_corrected_image = my_cv.bilinear_interpolate(binary_image, perspective_transformation_matrix,
                                                              (500, 500))
@@ -241,7 +243,7 @@ def extract_cells_of_sudoku(input_parameters):
 
     horizontal_edges = my_cv.thinning_boundary(gradient_y, kernel_for_edge_filling, 1)
     horizontal_edges = my_cv.thicken_boundary(horizontal_edges, kernel_for_edge_filling, 4)
-    horizontal_edges = my_cv.thinning_boundary(horizontal_edges, kernel_for_edge_filling, 1)
+    horizontal_edges = my_cv.thinning_boundary(horizontal_edges, kernel_for_edge_filling, 2)
     # remove weak edge pixels
     for i in range(horizontal_edges.shape[0]):
         for j in range(horizontal_edges.shape[1]):
@@ -294,7 +296,7 @@ def extract_cells_of_sudoku(input_parameters):
 
     # extract the cells and check if they are filled or unfilled
     empty_cells_images, filled_cells_images, empty_cells_index, filled_cells_index = verify_cell_contents(
-        corner_coordinates, sudoku_puzzle)
+        corner_coordinates, sudoku_puzzle, input_parameters["cell_threshold"])
     return filled_cells_index, filled_cells_images
 
 
@@ -302,25 +304,28 @@ def extract_cells_of_sudoku(input_parameters):
 # ======================================================================================================
 # ====================================== INPUT PARAMETERS ===============================================
 # =======================================================================================================
-image_path = 'Samples/s.jpg'  # <- insert image name here
 
-# for gaussian filter
-sigma = 0.5
+# for binary_image conversion
+kernel_size = 7
+bias = 3
+changing_value = 255
+
+# for Gaussian filter
+sigma = 1
 
 # for edge detection
 low_threshold = 0.01  # <- low_threshold value (in the range of 0 to 1)
 high_threshold = 0.2  # <- high_threshold value(in the range 0 to 1)
 
-# for adaptive thresholding
-kernel_size = 7
-bias = 2
-changing_value = 255
+# threshold for each cell to determine if they are filled or not
+# this threshold tells at least this many pixels has to be black for a cell to be considered as filled.
+cell_threshold = 300
 
-# for perspective transformation of sudoku puzzle
-destination_corners = np.float32([[50, 50], [450, 50], [450, 450], [50, 450]])
+# ==================================================================================================================
+# =================================================================================================================
 
-# for bi-linear interpolation of sudoku puzzle
-destination_image_size = (500, 500)
+# create image path of image present in samples directory
+image_path = "Samples/" + input("Enter the image name with extension placed in Samples directory : ")
 
 # dict containing all the input parameters
 input_params = {"image_path": image_path,
@@ -330,8 +335,21 @@ input_params = {"image_path": image_path,
                 "kernel_size": kernel_size,
                 "bias": bias,
                 "changing_value": changing_value,
-                "destination_corners": destination_corners,
-                "destination_image_size": destination_image_size,
+                "cell_threshold": cell_threshold
                 }
 
+# function which does or calls all other required functions
 index_of_filled_cells, images_of_filled_cells = extract_cells_of_sudoku(input_params)
+
+# extract image name
+img_name = input_params["image_path"].replace("\\", "/")
+img_name = img_name.split("/")[-1].split(".")[0]
+
+# create output file
+output_file = open("Outputs/" + str(img_name) + ".txt", "w")
+# write the filled cells index in the output file.
+output_file.write("The number of filled cells are : " + str(len(index_of_filled_cells)) + "\n")
+output_file.write("The indexes of filled cells are:\n")
+for index in range(len(index_of_filled_cells)):
+    output_file.write(str(index_of_filled_cells[index]) + "\n")
+output_file.close()

@@ -1,0 +1,33 @@
+Procedure:
+1. Enter the image name and change the input parameters as required.
+2. Open image as a grayscale image(single channel).
+3. Apply Gaussian filter to blur/smoothen the image.
+4. Convert image to Binary Image(only two pixel values throughout).
+5. Normalize the image.
+6. Find canny edges using Sobel edges.
+7. Trace the boundaries of all objects.
+8. Find the largest boundary assuming that sudoku will be the largest object within the image.
+9. Find the corners of the largest object(assumed to be sudoku).
+10. Find the perspective transformation matrix.
+11. Apply perspective transformation and extract the sudoku puzzle alone by using steps from 6 to 8.
+12. Normalize the sudoku image.
+13. Find vertical lines using the Sobel operator.
+14. Thicken and thin the edges as many times as required.
+15. Extract 10 largest vertical lines.
+16. Do the above for horizontal lines as well.
+17. Find the intersection of horizontal and vertical edges. The intersection will be a small trapezium because the edges were thick.
+18. Find the center of those intersection squares.
+19. Sort the center points which are the corners of each cell.
+20. Extract each cell by applying the perspective transformation to each cell.
+21. Count the number of black pixels in the cell. If the count is greater than the threshold value, then consider it as a filled cell.
+22. Write the indices of filled cells in a file and save it.
+
+
+
+Output Analysis:
+- All the images except "sudoku_6.jpg" were executed successfully with actual output same as the expected output.
+However, little tweakings with some parameters were required. Those tweakings are listed in README.md file.
+
+- The sudoku_6.jpg had cells with a lot of noise, and so even with tweakings, the actual output was never the same as the expected output.
+Because one actually filled cell has very less noise and one unfilled cell had a lot of noise, 
+so every time either the filled cell is missed or the noisy empty cell is considered as fill or both happens based on the threshold value.
