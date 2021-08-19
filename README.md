@@ -1,5 +1,17 @@
 # SUDOKU CELL EXTRACTOR
 
+## Table of Contents
+- [Description](https://github.com/amanjain487/sudoku_cell_extractor#description)
+- [Requirements](https://github.com/amanjain487/sudoku_cell_extractor#requirements)
+- [Installation](https://github.com/amanjain487/sudoku_cell_extractor#installation)
+- [Contents](https://github.com/amanjain487/sudoku_cell_extractor#contents)
+- [Execution](https://github.com/amanjain487/sudoku_cell_extractor#execution)
+- [Tweaking Input Parameters](https://github.com/amanjain487/sudoku_cell_extractor#tweaking-input-parameters)
+  - [Parameters for the Sample Images](https://github.com/amanjain487/sudoku_cell_extractor#parameters-for-the-sample-images)
+- [Note / Warnings](https://github.com/amanjain487/sudoku_cell_extractor#note--warnings)
+- [Maintainer](https://github.com/amanjain487/sudoku_cell_extractor#maintainer)
+
+
 ## Description
 This program processes an image containing sudoku and extracts each cell and checks if the cell is filled or not. 
 It gives the index of filled cells as output written in the output file. 
@@ -82,7 +94,7 @@ Install the following Modules.
     take some other image as input.
     ```
 
-  ### Parameters for the Sample Images,
+  ### Parameters for the Sample Images
   - sudoku_1
     - cell_threshold - 300
   - sudoku_2
